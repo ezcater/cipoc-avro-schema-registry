@@ -47,5 +47,7 @@ module AvroSchemaRegistry
     config.x.read_only_mode = ENV['READ_ONLY_MODE'] == 'true'
 
     config.x.default_compatibility = ENV.fetch('DEFAULT_COMPATIBILITY', 'NONE')
+
+    config.x.dockerized = File.exist?('/proc/1/cgroup') && File.readlines('/proc/1/cgroup').grep(/(docker|kube)/).any?
   end
 end

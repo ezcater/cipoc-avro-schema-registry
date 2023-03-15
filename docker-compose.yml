@@ -1,0 +1,34 @@
+version: "3.4"
+services:
+  schema-registry-db:
+    container_name: avroschemaregistry_schema-registry-db_1
+    image: postgres:10.10
+    volumes:
+      - $HOME/postgresql/10.10/data/schema-registry:/var/lib/postgresql/data:delegated
+
+  schema-registry-web:
+    container_name: avroschemaregistry_schema-registry-web_1
+    build:
+      context: .
+      args:
+        - BUNDLE_EZCATER__JFROG__IO
+    depends_on:
+      - schema-registry-db
+    command: "bin/start"
+    ports:
+      - "127.0.0.1:21004:21004"
+    environment:
+      BUNDLE_EZCATER__JFROG__IO:
+      POSTGRES_HOST: schema-registry-db
+      POSTGRES_USER: postgres
+    volumes:
+      - .:/usr/src/app
+      - bundle-volume:/usr/local/bundle:delegated
+
+volumes:
+  bundle-volume:
+
+networks:
+  default:
+    external:
+      name: ezcater-development-network
